@@ -13,37 +13,52 @@
 <div id="strengthResult" class="strength"></div>
 
 <script>
-const passwordInput = document.getElementById("password");
-const strengthResult = document.getElementById("strengthResult");
-
-passwordInput.addEventListener("input", function() {
-  checkPasswordStrength(this.value);
-});
-
-function checkPasswordStrength(password) {
-  let strength = 0;
+  const passwordInput = document.getElementById("password");
+  const strengthResult = document.getElementById("strengthResult");
   
-  if (password.length > 5) strength++;
-  if (password.length > 8) strength++;
-  if (/[A-Z]/.test(password)) strength++;
-  if (/[0-9]/.test(password)) strength++;
-  if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-  if (password.length === 0) {
-    strengthResult.textContent = "";
-    strengthResult.className = "strength";
-  } else if (strength <= 2) {
-    strengthResult.textContent = "Šibko geslo (Weak)";
-    strengthResult.className = "strength weak";
-  } else if (strength === 3 || strength === 4) {
-    strengthResult.textContent = "Srednje močno geslo (Medium)";
-    strengthResult.className = "strength medium";
-  } else {
-    strengthResult.textContent = "Zelo močno geslo (Strong)";
-    strengthResult.className = "strength strong";
+  passwordInput.addEventListener("input", function() {
+    checkPasswordStrength(this.value);
+  });
+  
+  function checkPasswordStrength(password) {
+    const length = password.length;
+    const hasLower = /[a-z]/.test(password);
+    const hasUpper = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+  
+    const charTypes = [hasLower, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
+  
+    if (length === 0) {
+      strengthResult.textContent = "";
+      strengthResult.className = "strength";
+      return;
+    }
+  
+    // Logic based on length and complexity
+    if (length < 8) {
+      strengthResult.textContent = "Šibko geslo (Weak)";
+      strengthResult.className = "strength weak";
+    } else if (length >= 8 && length < 12) {
+      if (charTypes >= 3) {
+        strengthResult.textContent = "Srednje močno geslo (Medium)";
+        strengthResult.className = "strength medium";
+      } else {
+        strengthResult.textContent = "Šibko geslo (Weak)";
+        strengthResult.className = "strength weak";
+      }
+    } else if (length >= 12 && charTypes === 1) {
+      strengthResult.textContent = "Srednje močno geslo (Medium)";
+      strengthResult.className = "strength medium";
+    } else if (length >= 12 && charTypes >= 2) {
+      strengthResult.textContent = "Zelo močno geslo (Strong)";
+      strengthResult.className = "strength strong";
+    } else {
+      strengthResult.textContent = "Srednje močno geslo (Medium)";
+      strengthResult.className = "strength medium";
+    }
   }
-}
-</script>
-
+  </script>
+  
 </body>
 </html>
