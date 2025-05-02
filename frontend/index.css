@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  height: 100vh;
+  background: url("../assets/background.jpg") no-repeat center right;
+  background-size: cover;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.container {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  text-align: center;
+  z-index: 1;
+}
+
+h1 {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 1rem;
+}
+
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+}
+
+.strength {
+  margin-top: 10px;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.strength.weak {
+  color: #ff3333;
+  background-color: #f8d7da;
+}
+
+.strength.medium {
+  color: #ffae42;
+  background-color: #fff3cd;
+}
+
+.strength.strong {
+  color: #4caf50;
+  background-color: #d4edda;
+}
+
+.success {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.error {
+  color: #ff3333;
+  font-weight: 500;
+}
+
+#pwnedMessage,
+#dictionaryMessage {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}

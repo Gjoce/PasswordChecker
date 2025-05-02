@@ -3,19 +3,19 @@ const axios = require("axios");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
-// Load the dictionary file from the project root
-const dictionaryPath = path.join(__dirname, 'dictionary.txt');
+const dictionaryPath = path.join(__dirname, "dictionary.txt");
 let dictionary;
 
-fs.readFile(dictionaryPath, 'utf-8', (err, data) => {
+fs.readFile(dictionaryPath, "utf-8", (err, data) => {
   if (err) {
     console.error("Error loading dictionary:", err);
   } else {
-    // Split the dictionary into an array of passwords
     dictionary = data.split("\n").map((line) => line.trim().toLowerCase());
     console.log("Dictionary loaded successfully.");
   }
@@ -58,7 +58,6 @@ app.post("/check-password", async (req, res) => {
   }
 });
 
-// New API to check if password is in the dictionary
 app.post("/check-dictionary", (req, res) => {
   const { password } = req.body;
 
@@ -76,16 +75,16 @@ app.post("/check-dictionary", (req, res) => {
   if (isInDictionary) {
     return res.json({
       isWeak: true,
-      message: "This password is commonly used and found in the dictionary",
+      message: "To geslo je pogosto uporabljeno in se nahaja v slovarju.",
     });
   } else {
     return res.json({
       isWeak: false,
-      message: "This password is not found in the dictionary",
+      message: "To geslo ni v slovarju, ni pogosto uporabljeno.",
     });
   }
 });
 
-app.listen(3000, () =>
-  console.log("✅ Server running on http://localhost:3000")
+app.listen(3001, () =>
+  console.log("✅ Server running on http://localhost:3001")
 );

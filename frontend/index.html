@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Preverjanje moči gesla</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="overlay"></div>
+    <div class="container">
+      <h1>Preverjanje moči gesla</h1>
+
+      <input type="password" id="password" placeholder="Vpiši geslo" />
+
+      <div id="strengthResult" class="strength"></div>
+      <div id="pwnedMessage"></div>
+
+      <div id="dictionaryMessage"></div>
+    </div>
+
+    <script>
+      const passwordInput = document.getElementById("password");
+      const submitBtn = document.getElementById("submitBtn");
+      const strengthResult = document.getElementById("strengthResult");
+      const pwnedMessage = document.getElementById("pwnedMessage");
+      const dictionaryMessage = document.getElementById("dictionaryMessage");
+
+      passwordInput.addEventListener("input", function () {
+        const password = passwordInput.value;
+        checkPasswordStrength(password);
+        checkPasswordBreach(password);
+        checkPasswordDictionary(password);
+      });
+
+      async function checkPasswordStrength(password) {
+        const length = password.length;
+        const hasLower = /[a-z]/.test(password);
+        const hasUpper = /[A-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+        const charTypes = [hasLower, hasUpper, hasNumber, hasSpecial].filter(
+          Boolean
+        ).length;
+
+        if (length === 0) {
+          strengthResult.textContent = "";
+          strengthResult.className = "strength";
+          return;
+        }
+
+        if (length < 8) {
+          strengthResult.textContent = "Šibko geslo (Weak)";
+          strengthResult.className = "strength weak";
+        } else if (length >= 8 && length < 12) {
+          if (charTypes >= 3) {
+            strengthResult.textContent = "Srednje močno geslo (Medium)";
+            strengthResult.className = "strength medium";
+          } else {
+            strengthResult.textContent = "Šibko geslo (Weak)";
+            strengthResult.className = "strength weak";
+          }
+        } else if (length >= 12 && charTypes === 1) {
+          strengthResult.textContent = "Srednje močno geslo (Medium)";
+          strengthResult.className = "strength medium";
+        } else if (length >= 12 && charTypes >= 2) {
+          strengthResult.textContent = "Zelo močno geslo (Strong)";
+          strengthResult.className = "strength strong";
+        } else {
+          strengthResult.textContent = "Srednje močno geslo (Medium)";
+          strengthResult.className = "strength medium";
+        }
+      }
+
+      async function checkPasswordBreach(password) {
+        try {
+          const response = await fetch("http://localhost:3001/check-password", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ password }),
+          });
+          const data = await response.json();
+          if (data.pwned) {
+            pwnedMessage.innerHTML = `Geslo je bilo ogroženo ${data.count} krat. Prosimo, izberite drugo geslo.`;
+            pwnedMessage.className = "error";
+          } else {
+            pwnedMessage.innerHTML = "Geslo ni bilo ogroženo.";
+            pwnedMessage.className = "success";
+          }
+        } catch (error) {
+          console.error("Napaka pri preverjanju ogroženosti gesla:", error);
+          pwnedMessage.innerHTML = "Napaka pri preverjanju ogroženosti gesla.";
+          pwnedMessage.className = "error";
+        }
+      }
+
+      async function checkPasswordDictionary(password) {
+        try {
+          const response = await fetch(
+            "http://localhost:3001/check-dictionary",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ password }),
+            }
+          );
+          const data = await response.json();
+          if (data.isWeak) {
+            dictionaryMessage.innerHTML = `To geslo je pogosto uporabljeno in se nahaja v slovarju.`;
+            dictionaryMessage.className = "error";
+          } else {
+            dictionaryMessage.innerHTML = `To geslo ni v slovarju, ni pogosto uporabljeno.`;
+            dictionaryMessage.className = "success";
+          }
+        } catch (error) {
+          console.error("Napaka pri preverjanju slovarja:", error);
+          dictionaryMessage.innerHTML = `Napaka pri preverjanju slovarja.`;
+          dictionaryMessage.className = "error";
+        }
+      }
+    </script>
+  </body>
+</html>
